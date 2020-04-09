@@ -1,0 +1,155 @@
+======== Building C++ version
+clang version 9.0.0-2 (tags/RELEASE_900/final)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+======== Building Rust version
+rustc 1.42.0 (b8cedc004 2020-03-09)
+binary: rustc
+commit-hash: b8cedc00407a4c56a3bda1ed605c6fc166655447
+commit-date: 2020-03-09
+host: x86_64-unknown-linux-gnu
+release: 1.42.0
+LLVM version: 9.0
+======== Running C++ version
+[1, 2, 5, 7, 9, 11]
+[1, 101, 5, 7, 9, 11]
+======== Running Rust version
+[1, 2, 5, 7, 9, 11]
+[1, 101, 5, 7, 9, 11]
+======== C++ version assembly
+
+mutate-cpp.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <mutate>:
+   0:	c6 44 24 f8 01       	mov    BYTE PTR [rsp-0x8],0x1
+   5:	40 80 c7 01          	add    dil,0x1
+   9:	40 88 7c 24 f9       	mov    BYTE PTR [rsp-0x7],dil
+   e:	c7 44 24 fa 05 07 09 	mov    DWORD PTR [rsp-0x6],0xb090705
+  15:	0b 
+  16:	8b 4c 24 fc          	mov    ecx,DWORD PTR [rsp-0x4]
+  1a:	48 c1 e1 20          	shl    rcx,0x20
+  1e:	8b 44 24 f8          	mov    eax,DWORD PTR [rsp-0x8]
+  22:	48 09 c8             	or     rax,rcx
+  25:	c3                   	ret    
+======== Rust version assembly
+
+mutate-rust.o:     file format elf64-x86-64
+
+
+Disassembly of section .text.mutate:
+
+0000000000000000 <mutate>:
+   0:	50                   	push   rax
+   1:	c6 04 24 01          	mov    BYTE PTR [rsp],0x1
+   5:	40 80 c7 01          	add    dil,0x1
+   9:	40 88 7c 24 01       	mov    BYTE PTR [rsp+0x1],dil
+   e:	c7 44 24 02 05 07 09 	mov    DWORD PTR [rsp+0x2],0xb090705
+  15:	0b 
+  16:	8b 4c 24 04          	mov    ecx,DWORD PTR [rsp+0x4]
+  1a:	48 c1 e1 20          	shl    rcx,0x20
+  1e:	8b 04 24             	mov    eax,DWORD PTR [rsp]
+  21:	48 09 c8             	or     rax,rcx
+  24:	59                   	pop    rcx
+  25:	c3                   	ret    
+======== C++ version LLVM IR
+; ModuleID = 'mutate.cpp'
+source_filename = "mutate.cpp"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+%struct.ArrayWrapper = type { [6 x i8] }
+
+; Function Attrs: nofree norecurse nounwind uwtable
+define dso_local i48 @mutate(i8 zeroext) local_unnamed_addr #0 {
+  %2 = alloca %struct.ArrayWrapper, align 8
+  %3 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 0
+  %4 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 5
+  store i8 6, i8* %4, align 1, !tbaa !2
+  store i8 1, i8* %3, align 8, !tbaa !2
+  %5 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 1
+  %6 = add i8 %0, 1
+  store i8 %6, i8* %5, align 1, !tbaa !2
+  %7 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 2
+  store i8 5, i8* %7, align 2, !tbaa !2
+  %8 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 3
+  store i8 7, i8* %8, align 1, !tbaa !2
+  %9 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 4
+  store i8 9, i8* %9, align 4, !tbaa !2
+  %10 = getelementptr inbounds %struct.ArrayWrapper, %struct.ArrayWrapper* %2, i64 0, i32 0, i64 5
+  %11 = load i8, i8* %10, align 1, !tbaa !2
+  %12 = add i8 %11, 5
+  store i8 %12, i8* %10, align 1, !tbaa !2
+  %13 = bitcast %struct.ArrayWrapper* %2 to i48*
+  %14 = load i48, i48* %13, align 8
+  ret i48 %14
+}
+
+attributes #0 = { nofree norecurse nounwind uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+
+!llvm.linker.options = !{}
+!llvm.module.flags = !{!0}
+!llvm.ident = !{!1}
+
+!0 = !{i32 1, !"wchar_size", i32 4}
+!1 = !{!"clang version 9.0.0-2 (tags/RELEASE_900/final)"}
+!2 = !{!3, !3, i64 0}
+!3 = !{!"omnipotent char", !4, i64 0}
+!4 = !{!"Simple C++ TBAA"}
+======== Rust version LLVM IR
+; ModuleID = 'mutate.3a1fbbbh-cgu.0'
+source_filename = "mutate.3a1fbbbh-cgu.0"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+%ArrayWrapper = type { [0 x i8], [6 x i8], [0 x i8] }
+%"unwind::libunwind::_Unwind_Exception" = type { [0 x i64], i64, [0 x i64], void (i32, %"unwind::libunwind::_Unwind_Exception"*)*, [0 x i64], [6 x i64], [0 x i64] }
+%"unwind::libunwind::_Unwind_Context" = type { [0 x i8] }
+
+; Function Attrs: nounwind nonlazybind uwtable
+define i48 @mutate(i8 zeroext %i) unnamed_addr #0 personality i32 (i32, i32, i64, %"unwind::libunwind::_Unwind_Exception"*, %"unwind::libunwind::_Unwind_Context"*)* @rust_eh_personality {
+start:
+  %numbers = alloca %ArrayWrapper, align 8
+  %0 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 0, i64 0
+  call void @llvm.lifetime.start.p0i8(i64 6, i8* nonnull %0)
+  %1 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 1, i64 5
+  store i8 6, i8* %1, align 1
+  %2 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 0, i64 1
+  store i8 1, i8* %0, align 8
+  %3 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 0, i64 2
+  %4 = add i8 %i, 1
+  store i8 %4, i8* %2, align 1
+  %5 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 0, i64 3
+  store i8 5, i8* %3, align 2
+  %6 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 0, i64 4
+  store i8 7, i8* %5, align 1
+  %7 = getelementptr inbounds %ArrayWrapper, %ArrayWrapper* %numbers, i64 0, i32 0, i64 5
+  store i8 9, i8* %6, align 4
+  %8 = load i8, i8* %7, align 1
+  %9 = add i8 %8, 5
+  store i8 %9, i8* %7, align 1
+  %.sroa.0.0..sroa_cast = bitcast %ArrayWrapper* %numbers to i48*
+  %.sroa.0.0.copyload = load i48, i48* %.sroa.0.0..sroa_cast, align 8
+  call void @llvm.lifetime.end.p0i8(i64 6, i8* nonnull %0)
+  ret i48 %.sroa.0.0.copyload
+}
+
+; Function Attrs: nounwind nonlazybind uwtable
+declare i32 @rust_eh_personality(i32, i32, i64, %"unwind::libunwind::_Unwind_Exception"*, %"unwind::libunwind::_Unwind_Context"*) unnamed_addr #0
+
+; Function Attrs: argmemonly nounwind
+declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #1
+
+; Function Attrs: argmemonly nounwind
+declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #1
+
+attributes #0 = { nounwind nonlazybind uwtable "probe-stack"="__rust_probestack" "target-cpu"="x86-64" }
+attributes #1 = { argmemonly nounwind }
+
+!llvm.module.flags = !{!0, !1}
+
+!0 = !{i32 7, !"PIC Level", i32 2}
+!1 = !{i32 2, !"RtLibUseGOT", i32 1}
